@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Flights</title>
+    <!-- Link to external CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_find.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Find and Book Flights</h1>
+        
+        <form method="POST" action="/find_flights/{{ user_id }}">
+            <div class="form-group">
+                <label for="flight_number">Search by Flight Number:</label>
+                <input type="text" id="flight_number" name="flight_number" placeholder="Enter Flight Number">
+            </div>
+        
+            <div class="form-group">
+                <label for="departure_city">Departure City:</label>
+                <select id="departure_city" name="departure_city">
+                    <option value="" disabled selected>Select Departure City</option>
+                    {% for city in cities %}
+                        <option value="{{ city }}">{{ city }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        
+            <div class="form-group">
+                <label for="arrival_city">Arrival City:</label>
+                <select id="arrival_city" name="arrival_city">
+                    <option value="" disabled selected>Select Arrival City</option>
+                    {% for city in cities %}
+                        <option value="{{ city }}">{{ city }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        
+            <button type="submit" class="btn btn-primary">Search Flights</button>
+        </form>
+
+        {% if flight_results %}
+            <h2 class="results-title">Available Flights</h2>
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Flight Number</th>
+                        <th>Plane</th>
+                        <th>Departure Airport</th>
+                        <th>Arrival Airport</th>
+                        <th>Price</th>
+                        <th>Availability</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for flight in flight_results %}
+                        <tr>
+                            <td>{{ flight.flight_number }}</td>
+                            <td>{{ flight.plane_name }}</td>
+                            <td>{{ flight.departure_airport }}</td>
+                            <td>{{ flight.arrival_airport }}</td>
+                            <td>${{ flight.price }}</td>
+                            <td>{{ flight.availability }}</td>
+                            <td>
+                               {% if flight.availability == 'Available' %}
+                                    <form method="POST" action="/book_ticket">
+                                        <input type="hidden" name="flight_id" value="{{ flight.id }}">
+                                        <button type="submit" class="btn btn-success">Book</button>
+                                    </form>
+                               {% else %}
+                                    <span class="unavailable">Full</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+        <a href="/logout" class="btn btn-primary">Logout</a>
+    </div>
+</body>
+</html>

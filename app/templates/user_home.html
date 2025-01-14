@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Home</title>
+    <!-- Link the external CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Welcome, {{ user.first_name }} {{ user.last_name }}</h2>
+        <p>Email: {{ user.email }}</p>
+        <h3>Your Tickets:</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Ticket ID</th>
+                    <th>Flight Number</th>
+                    <th>Seat Number</th>
+                    <th>Price</th>
+                    <th>Airline</th>
+                    <th>Departure Airport</th>
+                    <th>Departure City</th>
+                    <th>Arrival Airport</th>
+                    <th>Arrival City</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in tickets %}
+                <tr>
+                    <td>{{ ticket.ticket_id }}</td>
+                    <td>{{ ticket.flight_number }}</td>
+                    <td>{{ ticket.seat_number }}</td>
+                    <td>${{ ticket.price }}</td>
+                    <td>{{ ticket.airline_name }}</td>
+                    <td>{{ ticket.departure_airport }}</td>
+                    <td>{{ ticket.departure_city }}</td>
+                    <td>{{ ticket.arrival_airport }}</td>
+                    <td>{{ ticket.arrival_city }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="/find_flights/{{ user.id }}" class="btn btn-primary">Find Flights</a> | <a href="/logout" class="btn btn-primary">Logout</a>
+    </div>
+</body>
+</html>
