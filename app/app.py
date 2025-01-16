@@ -221,9 +221,9 @@ def find_flights(user_id):
 
     return render_template('find_flights.html', flight_results=None, cities=get_cities(), user_id=user_id)
 
-@app.route('/book_ticket', methods=['POST'])
-def book_ticket():
-    user_id = request.form.get('user_id')
+@app.route('/book_ticket/<int:user_id>', methods=['POST'])
+def book_ticket(user_id):
+    #user_id = request.form.get('user_id')
     flight_id = request.form.get('flight_id')
 
     flight = db.session.query(Flight).filter(Flight.id == flight_id).first()
@@ -232,14 +232,19 @@ def book_ticket():
    #     return "Flight is full!", 400
 
     price = random.randint(100, 1000)
-    random_letters = [random.choice('abcdefghijklmnopqrstuvwxyz1234567890') for _ in range(3)]
-    result = db.session.execute("SELECT MAX(id) FROM tickets")
-    max_id = result.scalar() or 0 
-    new_ticket = Ticket(id=max_id+1,passenger_id=user_id, flight_id=flight.id, price=price, seat_number = ''.join(random_letters))
+    seat_number = ''.join(random.choices('ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890', k=5))
+    max_id = db.session.query(db.func.max(Ticket.id)).scalar() or 0
+    new_ticket = Ticket(
+        id=max_id + 1,
+        passenger_id=user_id,
+        flight_id=flight.id,
+        price=price,
+        seat_number=seat_number
+    )
     db.session.add(new_ticket)
     db.session.commit()
 
-    return redirect(url_for('find_flights'))
+    return redirect(url_for('user_home', user_id=user_id))
 
 def get_cities():
     departure_cities = db.session.query(Airport.name).select_from(Flight).join(Airport, Flight.departure_airport == Airport.id).distinct().all()

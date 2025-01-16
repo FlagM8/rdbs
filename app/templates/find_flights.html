@@ -65,7 +65,7 @@
                             <td>{{ flight.availability }}</td>
                             <td>
                                {% if flight.availability == 'Available' %}
-                                    <form method="POST" action="/book_ticket">
+                                    <form method="POST" action="{{ url_for('book_ticket', user_id=user_id) }}" >
                                         <input type="hidden" name="flight_id" value="{{ flight.id }}">
                                         <button type="submit" class="btn btn-success">Book</button>
                                     </form>
